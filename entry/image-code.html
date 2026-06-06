@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>이미지 → RLE 코드</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:system-ui,'Segoe UI',sans-serif;
+  background:#0f0f13;color:#e0e0e0;min-height:100dvh;
+  padding:2rem 1rem;display:flex;flex-direction:column;align-items:center
+}
+.app{max-width:960px;width:100%}
+h1{font-size:1.5rem;margin-bottom:.25rem}
+.sub{color:#888;font-size:.875rem;margin-bottom:1.5rem}
+.tabs{display:flex;gap:.25rem;margin-bottom:1.5rem}
+.tab{
+  padding:.5rem 1.25rem;border-radius:8px 8px 0 0;cursor:pointer;
+  background:#1a1a24;color:#888;font-size:.875rem;transition:.15s;
+  border:1px solid transparent;border-bottom:0
+}
+.tab:hover{color:#ccc}
+.tab.active{background:#22222e;color:#fff;border-color:#333}
+.panel{display:none}
+.panel.active{display:block}
+.drop-zone{
+  border:2px dashed #333;border-radius:12px;padding:2.5rem 1rem;
+  text-align:center;cursor:pointer;transition:.2s;background:#14141c
+}
+.drop-zone:hover,.drop-zone.dragover{border-color:#6b6bff;background:#1a1a2e}
+.drop-zone.has-image{border-style:solid;padding:.75rem}
+.drop-zone-icon{font-size:2.5rem;margin-bottom:.5rem;opacity:.5}
+.drop-zone-text{color:#888}
+.drop-zone-hint{font-size:.8rem;color:#555;margin-top:.25rem}
+.drop-zone input{display:none}
+#infoBar{display:none;align-items:center;gap:.75rem;flex-wrap:wrap;color:#888;font-size:.875rem}
+.size-ctrl{display:none;margin-top:1rem;padding:.75rem 1rem;background:#14141c;border-radius:8px;border:1px solid #222;align-items:center;gap:.5rem;flex-wrap:wrap}
+.size-ctrl.show{display:flex}
+.size-ctrl label{color:#888;font-size:.825rem}
+.size-ctrl input{width:70px;padding:.3rem .4rem;border-radius:6px;border:1px solid #333;background:#0a0a0e;color:#e0e0e0;font-size:.825rem;outline:none;-moz-appearance:textfield}
+.size-ctrl input::-webkit-inner-spin-button{-webkit-appearance:none}
+.size-ctrl input:focus{border-color:#6b6bff}
+.size-ctrl .sep{color:#555;font-size:.825rem}
+.size-ctrl .lock{cursor:pointer;color:#555;font-size:1rem;user-select:none;transition:.15s}
+.size-ctrl .lock:hover{color:#888}
+.size-ctrl .lock.on{color:#6b6bff}
+.editor{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:1rem}
+@media(max-width:640px){.editor{grid-template-columns:1fr}}
+.preview-wrap canvas{
+  width:100%;max-height:400px;object-fit:contain;border-radius:8px;
+  background:repeating-conic-gradient(#1a1a24 0% 25%,#22222e 0% 50%) 0 0/16px 16px;display:block
+}
+.info{font-size:.8rem;color:#888;margin-top:.5rem}
+.code-wrap textarea{
+  width:100%;height:300px;resize:vertical;background:#0a0a0e;color:#c9d1d9;
+  border:1px solid #333;border-radius:8px;padding:.75rem;
+  font-family:'JetBrains Mono',monospace;font-size:.8rem;line-height:1.5
+}
+.code-wrap textarea:focus{outline:none;border-color:#6b6bff}
+.code-info{display:flex;justify-content:space-between;align-items:center;margin-top:.5rem;gap:.5rem;flex-wrap:wrap}
+.btn-group{display:flex;gap:.5rem;flex-wrap:wrap}
+.btn{
+  padding:.5rem 1rem;border-radius:6px;border:0;cursor:pointer;
+  font-size:.825rem;font-weight:500;transition:.15s;display:inline-flex;align-items:center;gap:.35rem
+}
+.btn-pri{background:#6b6bff;color:#fff}
+.btn-pri:hover{background:#5a5ae8}
+.btn-sec{background:#2a2a3a;color:#ccc}
+.btn-sec:hover{background:#33334a}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%);background:#2a2a3a;color:#e0e0e0;padding:.5rem 1rem;border-radius:8px;font-size:.825rem;opacity:0;transition:opacity .25s;pointer-events:none}
+.toast.show{opacity:1}
+.dec{display:flex;flex-direction:column;gap:1rem}
+.dec textarea{width:100%;min-height:120px;resize:vertical;background:#0a0a0e;color:#c9d1d9;border:1px solid #333;border-radius:8px;padding:.75rem;font-family:'JetBrains Mono',monospace;font-size:.8rem}
+.dec textarea:focus{outline:none;border-color:#6b6bff}
+.dec canvas{max-width:100%;border-radius:8px;display:block;background:repeating-conic-gradient(#1a1a24 0% 25%,#22222e 0% 50%) 0 0/16px 16px}
+.dec-info{color:#888;font-size:.825rem;display:flex;gap:.5rem;align-items:center}
+.dec-err{color:#ff6b6b;font-size:.825rem}
+.spinner{display:inline-block;width:14px;height:14px;border:2px solid #444;border-top-color:#6b6bff;border-radius:50%;animation:spin .6s linear infinite;flex-shrink:0}
+@keyframes spin{to{transform:rotate(360deg)}}
+.dec-input-wrap{position:relative}
+.dec-input-wrap .file-btn{position:absolute;bottom:.5rem;right:.5rem;font-size:.75rem;padding:.3rem .6rem;z-index:1}
+.dec-input-wrap .more-btn{position:absolute;bottom:.5rem;right:4.5rem;font-size:.75rem;padding:.3rem .6rem;z-index:1;display:none}
+</style>
+</head>
+<body>
+<div class="app">
+  <h1>이미지 → RLE 코드</h1>
+  <p class="sub">모든 무거운 연산을 별도 스레드에서 처리합니다</p>
+  <div class="tabs" id="tabs">
+    <div class="tab active" data-tab="enc">인코더</div>
+    <div class="tab" data-tab="dec">디코더</div>
+  </div>
+  <div class="panel active" id="panel-enc">
+    <div class="drop-zone" id="drop">
+      <div id="dropHelp">
+        <div class="drop-zone-icon">📁</div>
+        <div class="drop-zone-text">이미지를 드래그하거나 클릭하여 업로드</div>
+        <div class="drop-zone-hint">PNG, JPG, GIF, WebP</div>
+      </div>
+      <input type="file" id="file" accept="image/*">
+      <div id="infoBar">
+        <span id="dimInfo"></span>
+        <button class="btn btn-sec" id="changeBtn">다른 이미지</button>
+      </div>
+    </div>
+    <div class="size-ctrl" id="sizeCtrl">
+      <label>출력 크기</label>
+      <input type="number" id="wIn" min="1" max="4000" value="1">
+      <span class="sep">×</span>
+      <input type="number" id="hIn" min="1" max="4000" value="1">
+      <span class="lock on" id="lockBtn">🔗</span>
+      <button class="btn btn-pri" id="applyBtn">적용</button>
+      <button class="btn btn-sec" id="origBtn">원본</button>
+    </div>
+    <div class="editor">
+      <div class="preview-wrap">
+        <canvas id="canvas"></canvas>
+        <div class="info" id="imgInfo"></div>
+      </div>
+      <div class="code-wrap">
+        <textarea id="output" readonly placeholder="코드가 여기에 표시됩니다..."></textarea>
+        <div class="code-info">
+          <div class="btn-group">
+            <button class="btn btn-pri" id="copyBtn" disabled>📋 복사</button>
+            <button class="btn btn-sec" id="resetBtn" disabled>초기화</button>
+          </div>
+          <span class="badge" id="stats"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="panel" id="panel-dec">
+    <div class="dec">
+      <div class="dec-input-wrap">
+        <textarea id="decIn" placeholder="코드를 붙여넣거나 파일을 불러오세요"></textarea>
+        <input type="file" id="decFile" accept=".txt,.rle" style="display:none">
+        <button class="btn btn-sec file-btn" id="decFileBtn">파일 열기</button>
+        <button class="btn btn-sec more-btn" id="moreBtn">더보기</button>
+      </div>
+      <div class="btn-group">
+        <button class="btn btn-pri" id="decBtn">디코딩</button>
+        <button class="btn btn-sec" id="decClr">초기화</button>
+      </div>
+      <canvas id="decOut"></canvas>
+      <div class="dec-info" id="decInfo"></div>
+      <div class="dec-err" id="decErr"></div>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+/* ===== Web Worker ===== */
+var WB = new Blob([`
+var H8=Array.from({length:256},function(_,i){return i.toString(16).padStart(2,'0').toUpperCase()});
+function hx(r,g,b,a){return H8[r]+H8[g]+H8[b]+H8[a]}
+self.onmessage=function(e){
+  var m=e.data,r={id:m.id};
+  try{
+    if(m.t==='enc'){
+      var d=new Uint8ClampedArray(m.b),u32=new Uint32Array(d.buffer,d.byteOffset,d.length>>2);
+      var n=u32.length,out=['<h>'+m.h+'</h><w>'+m.w+'</w>'],i=0;
+      while(i<n){
+        var c=u32[i],j=i*4,k=1;
+        while(i+k<n&&u32[i+k]===c)k++;
+        var he=hx(d[j],d[j+1],d[j+2],d[j+3]);
+        out.push(k===1?'#'+he:'$'+he+k+'%');
+        i+=k;
+      }
+      r.t='enc';r.code=out.join('');self.postMessage(r);
+    }else if(m.t==='dec'){
+      var hd=m.s.match(/<h>(\\d+)<\\/h><w>(\\d+)<\\/w>/);
+      if(!hd)throw Error('header not found');
+      var h=+hd[1],w=+hd[2],tot=w*h;
+      var px=new Uint8ClampedArray(tot*4),off=0;
+      var re=/([#$])([0-9A-Fa-f]{8})(?:(\\d+)%)?/g,mat;
+      while((mat=re.exec(m.s))!==null){
+        var val=parseInt(mat[2],16),rr=(val>>>24)&255,gg=(val>>16)&255,bb=(val>>8)&255,aa=val&255;
+        var cnt=mat[1]==='$'&&mat[3]?+mat[3]:1;
+        for(var j=0;j<cnt;j++){px[off++]=rr;px[off++]=gg;px[off++]=bb;px[off++]=aa}
+      }
+      if(off!==tot*4)throw Error('pixel count mismatch');
+      r.t='dec';r.w=w;r.h=h;
+      var imgData=new ImageData(px,w,h);
+      createImageBitmap(imgData).then(function(bmp){
+        r.bmp=bmp;self.postMessage(r,[bmp]);
+      })['catch'](function(){
+        r.buf=px.buffer;self.postMessage(r,[r.buf]);
+      });
+    }
+  }catch(err){r.t='err';r.msg=err.message;self.postMessage(r)}
+};
+`]);
+var W = new Worker(URL.createObjectURL(WB));
+
+/* ===== UI ===== */
+var $=function(id){return document.getElementById(id)};
+var drop=$('drop'),fileIn=$('file'),dropHelp=$('dropHelp');
+var infoBar=$('infoBar'),dimInfo=$('dimInfo'),changeBtn=$('changeBtn');
+var canvas=$('canvas'),imgInfo=$('imgInfo'),output=$('output');
+var copyBtn=$('copyBtn'),resetBtn=$('resetBtn'),stats=$('stats');
+var sizeCtrl=$('sizeCtrl'),wIn=$('wIn'),hIn=$('hIn');
+var lockBtn=$('lockBtn'),applyBtn=$('applyBtn'),origBtn=$('origBtn');
+var toast=$('toast');
+var decIn=$('decIn'),decBtn=$('decBtn'),decClr=$('decClr');
+var decOut=$('decOut'),decInfo=$('decInfo'),decErr=$('decErr');
+var decFile=$('decFile'),decFileBtn=$('decFileBtn'),moreBtn=$('moreBtn');
+
+var srcImg=null,aspect=1,locked=1,encId=0,decId=0,decBusy=0,_decText='',_settingDec=0,_decOver=0;
+var L=function(){};
+L.prototype.log=function(){};
+
+$('tabs').addEventListener('click',function(e){
+  var t=e.target.closest('.tab');if(!t)return;
+  [].forEach.call(document.querySelectorAll('.tab,.panel'),function(x){x.classList.remove('active')});
+  t.classList.add('active');$('panel-'+t.dataset.tab).classList.add('active');
+});
+
+drop.addEventListener('click',function(){fileIn.click()});
+drop.addEventListener('dragover',function(e){e.preventDefault();drop.classList.add('dragover')});
+drop.addEventListener('dragleave',function(){drop.classList.remove('dragover')});
+drop.addEventListener('drop',function(e){
+  e.preventDefault();drop.classList.remove('dragover');
+  if(e.dataTransfer.files.length)loadFile(e.dataTransfer.files[0]);
+});
+fileIn.addEventListener('change',function(){if(fileIn.files.length)loadFile(fileIn.files[0])});
+
+function loadFile(f){
+  if(!f.type.startsWith('image/'))return showMsg('이미지 파일만 가능합니다');
+  var url=URL.createObjectURL(f),img=new Image();
+  img.onload=function(){process(img);URL.revokeObjectURL(url)};
+  img.onerror=function(){showMsg('이미지를 불러올 수 없습니다');URL.revokeObjectURL(url)};
+  img.src=url;
+}
+
+function process(img){
+  var w=img.naturalWidth,h=img.naturalHeight;
+  if(w*h>5000000)return showMsg('픽셀이 너무 많습니다 (최대 5M)');
+  srcImg=img;aspect=w/h;
+  dropHelp.style.display='none';infoBar.style.display='flex';
+  drop.classList.add('has-image');dimInfo.textContent=w+'\u00d7'+h;
+  wIn.value=w;hIn.value=h;sizeCtrl.classList.add('show');
+  doEnc(w,h);
+}
+
+function doEnc(w,h){
+  if(!srcImg)return;
+  canvas.width=w;canvas.height=h;
+  var ctx=canvas.getContext('2d');
+  ctx.drawImage(srcImg,0,0,w,h);
+  var id=++encId,t0=performance.now();
+  imgInfo.textContent=w+'\u00d7'+h+'px | '+(w*h).toLocaleString()+'px';
+  stats.innerHTML='<span class="spinner"></span> 인코딩 중...';
+  copyBtn.disabled=resetBtn.disabled=1;
+  var imgData=ctx.getImageData(0,0,w,h);
+  W.postMessage({t:'enc',id:id,w:w,h:h,b:imgData.data.buffer},[imgData.data.buffer]);
+  window['_et'+id]=t0;
+}
+
+lockBtn.addEventListener('click',function(){
+  locked=!locked;
+  lockBtn.classList.toggle('on',locked);
+  lockBtn.textContent=locked?'🔗':'⛓️‍💥';
+});
+wIn.addEventListener('input',function(){if(locked&&srcImg)hIn.value=Math.round(wIn.value/aspect)});
+hIn.addEventListener('input',function(){if(locked&&srcImg)wIn.value=Math.round(hIn.value*aspect)});
+applyBtn.addEventListener('click',function(){
+  var w=+wIn.value,h=+hIn.value;
+  if(w<1||h<1||w*h>1e7)return showMsg('올바른 크기를 입력하세요 (1~10M 픽셀)');
+  doEnc(w,h);
+});
+origBtn.addEventListener('click',function(){
+  if(!srcImg)return;
+  var w=srcImg.naturalWidth,h=srcImg.naturalHeight;
+  wIn.value=w;hIn.value=h;doEnc(w,h);
+});
+copyBtn.addEventListener('click',async function(){
+  try{await navigator.clipboard.writeText(output.value)}
+  catch{output.select();document.execCommand('copy')}
+  showMsg('클립보드에 복사되었습니다');
+});
+resetBtn.addEventListener('click',function(){
+  srcImg=null;output.value='';stats.textContent='';imgInfo.textContent='';dimInfo.textContent='';
+  copyBtn.disabled=resetBtn.disabled=1;
+  dropHelp.style.display='';infoBar.style.display='none';sizeCtrl.classList.remove('show');
+  drop.classList.remove('has-image');fileIn.value='';canvas.width=canvas.height=0;
+});
+changeBtn.addEventListener('click',function(){fileIn.click()});
+
+var tmr;
+function showMsg(msg){
+  toast.textContent=msg;toast.classList.add('show');
+  clearTimeout(tmr);tmr=setTimeout(function(){toast.classList.remove('show')},2000);
+}
+
+/* ===== Worker reply ===== */
+W.onmessage=function(e){
+  var r=e.data;
+  if(r.id!==encId&&r.id!==decId)return;
+  if(r.t==='err'){
+    if(r.id===encId){stats.textContent='오류';copyBtn.disabled=resetBtn.disabled=0}
+    else{decErr.textContent='오류: '+r.msg;decInfo.innerHTML='';releaseDec();}
+    return;
+  }
+  if(r.t==='enc'&&r.id===encId){
+    var t0=window['_et'+r.id]||performance.now();
+    output.value=r.code;
+    stats.textContent=r.code.length.toLocaleString()+'자 | '+(performance.now()-t0).toFixed(0)+'ms';
+    copyBtn.disabled=resetBtn.disabled=0;delete window['_et'+r.id];
+    return;
+  }
+  if(r.t==='dec'&&r.id===decId){
+    decErr.textContent='';
+    var ctx=decOut.getContext('2d');
+    decOut.width=r.w;decOut.height=r.h;
+    if(r.bmp){
+      ctx.drawImage(r.bmp,0,0);r.bmp.close();
+    }else{
+      ctx.putImageData(new ImageData(new Uint8ClampedArray(r.buf),r.w,r.h),0,0);
+    }
+    decInfo.innerHTML=r.w+'\u00d7'+r.h+'px | '+(_decText||decIn.value).length.toLocaleString()+'자';
+    releaseDec();
+  }
+};
+
+function releaseDec(){
+  decBtn.disabled=0;decBtn.textContent='디코딩';decBusy=0;
+}
+
+/* ===== Decoder ===== */
+function startDecode(text){
+  if(decBusy||decBtn.disabled||!text)return;
+  decBusy=1;decBtn.disabled=1;decBtn.textContent='작업 중';
+  decErr.textContent='';
+  decInfo.innerHTML='<span class="spinner"></span> 디코딩 중...';
+  ++decId;
+  W.postMessage({t:'dec',id:decId,s:text});
+}
+
+function pasteHandler(text){
+  if(!text)return;
+  _decText=text;_settingDec=1;
+  var len=text.length;
+  if(len>1000){
+    decIn.value=text.slice(0,1000)+'\n...';
+    _decOver=1;moreBtn.style.display='inline-block';
+  }else{
+    decIn.value=text;
+    _decOver=0;moreBtn.style.display='none';
+  }
+  _settingDec=0;
+  startDecode(text);
+}
+
+/* Paste: always preventDefault, set textarea ourselves */
+decIn.addEventListener('paste',function(e){
+  var text=(e.clipboardData||window.clipboardData).getData('text');
+  if(!text||!text.trim())return;
+  e.preventDefault();
+  pasteHandler(text);
+});
+
+/* 더보기: confirm 후 전체 텍스트 표시 */
+moreBtn.addEventListener('click',function(){
+  if(!confirm('이 내용을 더 보려면 페이지가 잠시 느려질 수 있습니다.\n계속하시겠습니까?'))return;
+  _settingDec=1;
+  decIn.value=_decText;
+  _settingDec=0;
+  moreBtn.style.display='none';
+});
+
+/* User typing in textarea → clear _decText, use textarea value directly */
+decIn.addEventListener('input',function(){
+  if(!_settingDec){_decText='';moreBtn.style.display='none'}
+});
+
+/* File load for decoder */
+decFileBtn.addEventListener('click',function(){decFile.click()});
+decFile.addEventListener('change',function(){
+  if(!decFile.files.length)return;
+  var reader=new FileReader();
+  reader.onload=function(e){
+    pasteHandler(e.target.result);
+    decFile.value='';
+  };
+  reader.readAsText(decFile.files[0]);
+});
+
+/* Button click */
+decBtn.addEventListener('click',function(){
+  startDecode(_decText||decIn.value);
+});
+
+decClr.addEventListener('click',function(){
+  decIn.value='';decOut.width=decOut.height=0;
+  decInfo.innerHTML='';decErr.textContent='';_decText='';_decOver=0;
+  moreBtn.style.display='none';releaseDec();
+});
+
+/* Keyboard: Ctrl+Enter to decode */
+decIn.addEventListener('keydown',function(e){
+  if((e.ctrlKey||e.metaKey)&&e.key==='Enter'){
+    e.preventDefault();
+    startDecode(_decText||decIn.value);
+  }
+});
+</script>
+</body>
+</html>
