@@ -1,4 +1,3 @@
-```javascript
 "use strict";
 
 /*
@@ -169,4 +168,3 @@ console.log(
   "%c// TODO: fix everything",
   "color:#4c6854;font-size:12px;"
 );
-```
