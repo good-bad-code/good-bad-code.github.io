@@ -524,41 +524,364 @@ section {
    TECH STACK
 ========================= */
 
-.stack {
-  display: flex;
+/* =========================
+   WAVE TECH STACK
+========================= */
 
-  flex-wrap: wrap;
-
-  gap: 10px;
+#stack {
+  overflow: hidden;
 }
 
 
-.tag {
-  padding: 8px 13px;
+/* 전체 영역 */
+
+.tech-wave-container {
+  position: relative;
+
+  width: 100%;
+
+  height: 150px;
+
+  overflow: hidden;
+
+  /*
+   * 양쪽 끝을 자연스럽게 사라지게 함
+   */
+  mask-image:
+    linear-gradient(
+      90deg,
+      transparent 0%,
+      black 8%,
+      black 92%,
+      transparent 100%
+    );
+}
+
+
+/* 움직이는 라인 */
+
+.tech-wave-track {
+  position: absolute;
+
+  left: 0;
+  top: 50%;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 18px;
+
+  width: max-content;
+
+  transform: translateY(-50%);
+
+  animation:
+    wave-scroll 26s linear infinite;
+
+  will-change: transform;
+}
+
+
+/* 각각의 기술 */
+
+.tech-wave-item {
+  position: relative;
+
+  flex-shrink: 0;
+
+  padding: 13px 21px;
 
   border:
-    1px solid var(--border);
+    1px solid rgba(57, 255, 136, 0.22);
 
-  background: var(--panel);
+  background:
+    rgba(8, 15, 10, 0.9);
 
   color: var(--green-soft);
 
-  font-size: 12px;
+  font-size: 13px;
 
-  transition: 0.2s;
+  white-space: nowrap;
+
+  /*
+   * 네온 효과
+   */
+  box-shadow:
+    0 0 0 transparent;
+
+  transition:
+    color .25s,
+    border-color .25s,
+    box-shadow .25s,
+    background .25s;
 }
 
 
-.tag:hover {
+/* > 기호 */
+
+.tech-wave-item::before {
+  content: ">";
+
+  color: var(--green);
+
+  margin-right: 9px;
+
+  opacity: .8;
+}
+
+
+/* Hover */
+
+.tech-wave-item:hover {
+  color: var(--green);
+
   border-color: var(--green);
 
-  transform: translateY(-2px);
+  background:
+    rgba(57, 255, 136, 0.05);
+
+  box-shadow:
+    0 0 25px
+    rgba(57, 255, 136, 0.16);
+}
+
+
+/* =========================
+   WAVE MOTION
+========================= */
+
+
+/*
+ * 전체 라인이
+ * 위 → 아래 → 위로 흐르는 느낌
+ */
+
+@keyframes wave-scroll {
+
+  0% {
+    transform:
+      translate3d(0, -50%, 0)
+      rotate(0deg);
+  }
+
+  25% {
+    transform:
+      translate3d(-12.5%, -54%, 0)
+      rotate(-0.4deg);
+  }
+
+  50% {
+    transform:
+      translate3d(-25%, -46%, 0)
+      rotate(0.4deg);
+  }
+
+  75% {
+    transform:
+      translate3d(-37.5%, -54%, 0)
+      rotate(-0.4deg);
+  }
+
+  100% {
+    transform:
+      translate3d(-50%, -50%, 0)
+      rotate(0deg);
+  }
+
+}
+
+
+/* =========================
+   INDIVIDUAL WAVE
+========================= */
+
+
+/*
+ * 각 요소에 미세한 위아래 차이를 줘서
+ * 한 줄이 아니라 실제 파도처럼 보이게 함
+ */
+
+.tech-wave-item:nth-child(1) {
+  transform: translateY(4px);
+}
+
+.tech-wave-item:nth-child(2) {
+  transform: translateY(0);
+}
+
+.tech-wave-item:nth-child(3) {
+  transform: translateY(-5px);
+}
+
+.tech-wave-item:nth-child(4) {
+  transform: translateY(-9px);
+}
+
+.tech-wave-item:nth-child(5) {
+  transform: translateY(-12px);
+}
+
+.tech-wave-item:nth-child(6) {
+  transform: translateY(-9px);
+}
+
+.tech-wave-item:nth-child(7) {
+  transform: translateY(-4px);
+}
+
+.tech-wave-item:nth-child(8) {
+  transform: translateY(2px);
+}
+
+.tech-wave-item:nth-child(9) {
+  transform: translateY(7px);
+}
+
+.tech-wave-item:nth-child(10) {
+  transform: translateY(11px);
+}
+
+.tech-wave-item:nth-child(11) {
+  transform: translateY(8px);
+}
+
+.tech-wave-item:nth-child(12) {
+  transform: translateY(3px);
+}
+
+
+/*
+ * 복제된 두 번째 세트
+ */
+
+.tech-wave-item:nth-child(13) {
+  transform: translateY(4px);
+}
+
+.tech-wave-item:nth-child(14) {
+  transform: translateY(0);
+}
+
+.tech-wave-item:nth-child(15) {
+  transform: translateY(-5px);
+}
+
+.tech-wave-item:nth-child(16) {
+  transform: translateY(-9px);
+}
+
+.tech-wave-item:nth-child(17) {
+  transform: translateY(-12px);
+}
+
+.tech-wave-item:nth-child(18) {
+  transform: translateY(-9px);
+}
+
+.tech-wave-item:nth-child(19) {
+  transform: translateY(-4px);
+}
+
+.tech-wave-item:nth-child(20) {
+  transform: translateY(2px);
+}
+
+.tech-wave-item:nth-child(21) {
+  transform: translateY(7px);
+}
+
+.tech-wave-item:nth-child(22) {
+  transform: translateY(11px);
+}
+
+.tech-wave-item:nth-child(23) {
+  transform: translateY(8px);
+}
+
+.tech-wave-item:nth-child(24) {
+  transform: translateY(3px);
+}
+
+
+/* =========================
+   GLOW LINE
+========================= */
+
+.tech-wave-container::before {
+  content: "";
+
+  position: absolute;
+
+  left: 0;
+  right: 0;
+
+  top: 50%;
+
+  height: 1px;
+
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      rgba(57, 255, 136, .12),
+      transparent
+    );
 
   box-shadow:
     0 0 15px
-    rgba(57, 255, 136, 0.08);
+    rgba(57, 255, 136, .15);
+
+  pointer-events: none;
 }
 
+
+/* =========================
+   HOVER PAUSE
+========================= */
+
+.tech-wave-container:hover
+.tech-wave-track {
+  animation-play-state: paused;
+}
+
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 800px) {
+
+  .tech-wave-container {
+    height: 130px;
+  }
+
+  .tech-wave-track {
+    gap: 12px;
+
+    animation-duration: 20s;
+  }
+
+  .tech-wave-item {
+    padding: 10px 15px;
+
+    font-size: 11px;
+  }
+
+}
+
+
+/* =========================
+   REDUCED MOTION
+========================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+  .tech-wave-track {
+    animation: none;
+  }
+
+}
 
 /* =========================
    PROJECTS
