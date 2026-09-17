@@ -1,0 +1,402 @@
+```html
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>good-bad-code — Developer Portfolio</title>
+
+  <meta
+    name="description"
+    content="good-bad-code's developer portfolio — Code, build, break, repeat."
+  />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&display=swap"
+    rel="stylesheet"
+  />
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+
+  <!-- Navigation -->
+  <nav>
+    <div class="container nav-inner">
+
+      <a href="#" class="logo">
+        good<span>-</span>bad<span>-</span>code
+      </a>
+
+      <ul class="nav-links">
+        <li><a href="#about">about</a></li>
+        <li><a href="#stack">stack</a></li>
+        <li><a href="#projects">projects</a></li>
+        <li><a href="#github">github</a></li>
+      </ul>
+
+    </div>
+  </nav>
+
+
+  <!-- Hero -->
+  <header class="hero">
+
+    <div class="container hero-grid">
+
+      <div class="hero-content">
+
+        <div class="terminal-label">
+          whoami
+        </div>
+
+        <h1>
+          good<span class="accent">-</span><br>
+          bad<span class="accent">-</span>code
+        </h1>
+
+        <p class="hero-description">
+          <strong>Developer.</strong>
+          Builder.
+          Debugger.
+          Sometimes, professional bug creator.
+          <br><br>
+
+          I build things, break things, fix things,
+          and occasionally wonder why they worked
+          in the first place.
+        </p>
+
+        <div class="buttons">
+
+          <a class="btn primary" href="#projects">
+            ./view-projects
+          </a>
+
+          <a
+            class="btn secondary"
+            href="https://github.com/good-bad-code"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            GitHub ↗
+          </a>
+
+        </div>
+
+      </div>
+
+
+      <!-- Code Window -->
+      <div class="code-window">
+
+        <div class="window-header">
+
+          <div class="dot red"></div>
+          <div class="dot yellow"></div>
+          <div class="dot green"></div>
+
+          <span class="window-title">
+            developer.js
+          </span>
+
+        </div>
+
+<pre><code><span class="keyword">class</span> <span class="function">Developer</span> {
+
+  <span class="function">constructor</span>() {
+    <span class="keyword">this</span>.name = <span class="string">"good-bad-code"</span>;
+    <span class="keyword">this</span>.coffee = <span class="keyword">Infinity</span>;
+    <span class="keyword">this</span>.bugs = <span class="keyword">true</span>;
+  }
+
+  <span class="function">build</span>() {
+    <span class="keyword">return</span> <span class="string">"something cool"</span>;
+  }
+
+  <span class="function">debug</span>() {
+    <span class="keyword">return</span> <span class="string">"why is this working?"</span>;
+  }
+}
+
+<span class="comment">// TODO: fix everything</span></code></pre>
+
+      </div>
+
+    </div>
+
+  </header>
+
+
+  <!-- About -->
+  <section id="about">
+
+    <div class="container">
+
+      <div class="section-title">
+        <span>01.</span>
+        <h2>about</h2>
+      </div>
+
+
+      <div class="about-grid">
+
+        <div class="panel">
+
+          <h3>who am i?</h3>
+
+          <p>
+            I'm a developer who enjoys turning ideas
+            into actual software.
+
+            I like experimenting with new technologies,
+            building useful projects, and learning
+            by breaking things.
+          </p>
+
+
+          <div class="stats">
+
+            <div class="stat">
+              <strong>∞</strong>
+              <span>ideas</span>
+            </div>
+
+            <div class="stat">
+              <strong>24/7</strong>
+              <span>debugging</span>
+            </div>
+
+            <div class="stat">
+              <strong>404</strong>
+              <span>bugs not found</span>
+            </div>
+
+            <div class="stat">
+              <strong>git</strong>
+              <span>push --force</span>
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <div class="panel">
+
+          <h3>philosophy</h3>
+
+          <p>
+            Good code is readable.<br>
+            Bad code is educational.<br>
+            Broken code is an opportunity.
+
+            <br><br>
+
+            The goal isn't to write perfect code.
+            It's to keep getting better at writing it.
+          </p>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- Tech Stack -->
+  <section id="stack">
+
+    <div class="container">
+
+      <div class="section-title">
+        <span>02.</span>
+        <h2>tech stack</h2>
+      </div>
+
+
+      <div class="stack">
+
+        <span class="tag">HTML</span>
+        <span class="tag">CSS</span>
+        <span class="tag">JavaScript</span>
+        <span class="tag">TypeScript</span>
+        <span class="tag">Python</span>
+        <span class="tag">Java</span>
+        <span class="tag">Node.js</span>
+        <span class="tag">React</span>
+        <span class="tag">Git</span>
+        <span class="tag">GitHub</span>
+        <span class="tag">Chrome Extensions</span>
+        <span class="tag">REST API</span>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- Projects -->
+  <section id="projects">
+
+    <div class="container">
+
+      <div class="section-title">
+        <span>03.</span>
+        <h2>selected projects</h2>
+      </div>
+
+
+      <div class="projects">
+
+
+        <a
+          class="project"
+          href="https://github.com/good-bad-code"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+
+          <div class="project-number">
+            PROJECT_01
+          </div>
+
+          <h3>Good Bad Code</h3>
+
+          <p>
+            Experiments, projects, random ideas,
+            and code that probably should not work.
+          </p>
+
+          <div class="project-tech">
+            GitHub · Open Source
+          </div>
+
+        </a>
+
+
+        <a
+          class="project"
+          href="https://github.com/good-bad-code"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+
+          <div class="project-number">
+            PROJECT_02
+          </div>
+
+          <h3>Web Projects</h3>
+
+          <p>
+            Websites and web experiments built
+            from simple ideas.
+          </p>
+
+          <div class="project-tech">
+            HTML · CSS · JavaScript
+          </div>
+
+        </a>
+
+
+        <a
+          class="project"
+          href="https://github.com/good-bad-code"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+
+          <div class="project-number">
+            PROJECT_03
+          </div>
+
+          <h3>Chrome Extensions</h3>
+
+          <p>
+            Small browser tools designed to make
+            everyday browsing a little better.
+          </p>
+
+          <div class="project-tech">
+            JavaScript · Chrome API
+          </div>
+
+        </a>
+
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- GitHub -->
+  <section id="github">
+
+    <div class="container">
+
+      <div class="github-box">
+
+        <div class="terminal-label">
+          git remote -v
+        </div>
+
+        <h2>
+          Let's build something.
+        </h2>
+
+        <p>
+          Check out the repositories, experiments,
+          and questionable coding decisions.
+        </p>
+
+        <a
+          class="btn primary"
+          href="https://github.com/good-bad-code"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          github.com/good-bad-code ↗
+        </a>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- Footer -->
+  <footer>
+
+    <div class="container footer-inner">
+
+      <div>
+        <span class="green">good-bad-code</span>
+        © 2026
+      </div>
+
+      <div>
+        Built with HTML · CSS · JavaScript
+      </div>
+
+    </div>
+
+  </footer>
+
+
+  <script src="script.js"></script>
+
+</body>
+</html>
+```
