@@ -520,7 +520,7 @@ section {
 }
 
 /* ========================================
-   TECH STACK - INFINITE WAVE
+   TECH STACK
 ======================================== */
 
 #stack {
@@ -528,75 +528,72 @@ section {
 }
 
 
-/* 전체 마키 영역 */
+/* 마키 */
+
 .tech-marquee {
   width: 100%;
   overflow: hidden;
 
   position: relative;
 
-  padding: 45px 0 65px;
+  padding: 50px 0 70px;
 
-  /* 양쪽 끝 페이드 */
   -webkit-mask-image: linear-gradient(
-    90deg,
-    transparent 0%,
-    black 8%,
-    black 92%,
-    transparent 100%
+    to right,
+    transparent,
+    black 10%,
+    black 90%,
+    transparent
   );
 
   mask-image: linear-gradient(
-    90deg,
-    transparent 0%,
-    black 8%,
-    black 92%,
-    transparent 100%
+    to right,
+    transparent,
+    black 10%,
+    black 90%,
+    transparent
   );
 }
 
 
-/* 움직이는 전체 트랙 */
+/* 움직이는 트랙 */
+
 .tech-track {
   display: flex;
 
   width: max-content;
 
-  will-change: transform;
+  animation: tech-scroll 20s linear infinite;
 
-  animation: tech-scroll 22s linear infinite;
+  will-change: transform;
 }
 
 
-/* 한 세트 */
+/* 기술 그룹 */
+
 .tech-group {
   display: flex;
 
   align-items: center;
 
-  gap: 20px;
+  gap: 24px;
 
-  padding-right: 20px;
+  padding-right: 24px;
 
   flex-shrink: 0;
 }
 
 
-/* 기술 카드 */
-.tech-item {
-  position: relative;
+/* 기술 */
 
+.tech-item {
   display: flex;
 
   align-items: center;
 
-  justify-content: center;
-
   flex-shrink: 0;
 
-  padding: 13px 20px;
-
-  min-width: 90px;
+  padding: 14px 20px;
 
   border: 1px solid var(--border);
 
@@ -608,34 +605,22 @@ section {
 
   white-space: nowrap;
 
-  box-shadow:
-    0 0 20px rgba(57, 255, 136, 0.03);
-
-  animation:
-    tech-wave 2.5s ease-in-out infinite;
-
-  transition:
-    border-color 0.2s,
-    color 0.2s,
-    box-shadow 0.2s;
+  animation: tech-wave 2.5s ease-in-out infinite;
 }
 
 
-/* > 기호 */
+/* > */
+
 .tech-item::before {
   content: ">";
 
   color: var(--green);
 
   margin-right: 9px;
-
-  opacity: 0.7;
 }
 
 
-/* ========================================
-   WAVE DELAY
-======================================== */
+/* 물결 */
 
 .tech-item:nth-child(1) {
   animation-delay: 0s;
@@ -686,59 +671,8 @@ section {
 }
 
 
-/* 두 번째 세트도 동일하게 */
-.tech-group:nth-child(2) .tech-item:nth-child(1) {
-  animation-delay: 0s;
-}
-
-.tech-group:nth-child(2) .tech-item:nth-child(2) {
-  animation-delay: -0.2s;
-}
-
-.tech-group:nth-child(2) .tech-item:nth-child(3) {
-  animation-delay: -0.4s;
-}
-
-.tech-group:nth-child(2) .tech-item:nth-child(4) {
-  animation-delay: -0.6s;
-}
-
-.tech-group:nth-child(2) .tech-item:nth-child(5) {
-  animation-delay: -0.8s;
-}
-
-.tech-group:nth-child(2) .tech-item:nth-child(6) {
-  animation-delay: -1s;
-}
-
-.tech-group:nth-child(2) .tech-item:nth-child(7) {
-  animation-delay: -1.2s;
-}
-
-.tech-group:nth-child(2) .tech-item:nth-child(8) {
-  animation-delay: -1.4s;
-}
-
-.tech-group:nth-child(2) .tech-item:nth-child(9) {
-  animation-delay: -1.6s;
-}
-
-.tech-group:nth-child(2) .tech-item:nth-child(10) {
-  animation-delay: -1.8s;
-}
-
-.tech-group:nth-child(2) .tech-item:nth-child(11) {
-  animation-delay: -2s;
-}
-
-.tech-group:nth-child(2) .tech-item:nth-child(12) {
-  animation-delay: -2.2s;
-}
-
-
-/* ========================================
-   HORIZONTAL SCROLL
-======================================== */
+/* 좌 → 우가 아닌
+   오른쪽 → 왼쪽 */
 
 @keyframes tech-scroll {
 
@@ -753,75 +687,63 @@ section {
 }
 
 
-/* ========================================
-   WAVE
-======================================== */
+/* 위아래 물결 */
 
 @keyframes tech-wave {
 
   0% {
-    transform: translateY(9px);
+    transform: translateY(12px);
   }
 
   50% {
-    transform: translateY(-9px);
+    transform: translateY(-12px);
   }
 
   100% {
-    transform: translateY(9px);
+    transform: translateY(12px);
   }
 
 }
 
 
-/* ========================================
-   HOVER
-======================================== */
+/* Hover */
 
 .tech-item:hover {
-
   color: var(--green);
 
   border-color: var(--green);
 
   box-shadow:
-    0 0 25px rgba(57, 255, 136, 0.18);
-
+    0 0 25px
+    rgba(57, 255, 136, 0.18);
 }
 
 
-/* 마우스를 올리면 이동 정지 */
+/* Hover 시 정지 */
+
 .tech-marquee:hover .tech-track {
   animation-play-state: paused;
 }
 
 
-/* ========================================
-   MOBILE
-======================================== */
+/* 모바일 */
 
 @media (max-width: 800px) {
 
-  .tech-marquee {
-    padding: 35px 0 50px;
-  }
-
-  .tech-track {
-    animation-duration: 18s;
-  }
-
   .tech-group {
-    gap: 12px;
+    gap: 14px;
 
-    padding-right: 12px;
+    padding-right: 14px;
   }
 
   .tech-item {
     padding: 10px 14px;
 
-    min-width: auto;
-
     font-size: 11px;
+  }
+
+  .tech-track {
+    animation-duration: 17s;
   }
 
 }
